@@ -1,66 +1,51 @@
 'use client';
 
-import { Box, Container, Typography, Link } from '@mui/material';
-import { Bolt } from '@mui/icons-material';
+import { Box, Container, Typography, Link, alpha } from '@mui/material';
 import { track } from '@vercel/analytics';
 
 export default function Banner() {
   return (
     <Box
       sx={{
-        background: (theme) =>
+        backgroundColor: (theme) =>
           theme.palette.mode === 'light'
-            ? 'linear-gradient(135deg, #5e35b1 0%, #1e88e5 100%)'
-            : 'linear-gradient(135deg, #7c4dff 0%, #42a5f5 100%)',
-        color: 'white',
-        py: 2,
-        px: 2,
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            ? alpha(theme.palette.primary.main, 0.08)
+            : alpha(theme.palette.primary.main, 0.15),
+        borderBottom: (theme) =>
+          `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+        py: 1.5,
       }}
     >
       <Container maxWidth="lg">
-        <Box
+        <Typography
+          variant="body2"
+          align="center"
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 1.5,
-            flexWrap: 'wrap',
+            fontSize: { xs: '0.8rem', sm: '0.85rem' },
+            fontWeight: 500,
           }}
         >
-          <Bolt sx={{ fontSize: 28, color: 'white', opacity: 0.9 }} />
-          <Typography
-            variant="h6"
-            component="div"
+          🎯 Demo Application • Built with{' '}
+          <Link
+            href="https://voltagepark.com/ai-factory"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track('voltage_park_link_click', { location: 'banner' })}
             sx={{
+              color: 'primary.main',
               fontWeight: 700,
-              fontSize: { xs: '0.95rem', sm: '1.1rem', md: '1.25rem' },
-              textAlign: 'center',
+              textDecoration: 'none',
+              borderBottom: '2px solid',
+              borderBottomColor: 'primary.main',
+              transition: 'opacity 0.2s',
+              '&:hover': {
+                opacity: 0.8,
+              },
             }}
           >
-            Powered by{' '}Voltage Park AI Factory.{' '}
-            <Link
-              href="https://voltagepark.com/ai-factory-preview"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => track('voltage_park_link_click', { location: 'banner', cta: 'try_for_free' })}
-              sx={{
-                color: 'white',
-                textDecoration: 'none',
-                fontWeight: 800,
-                borderBottom: '2px solid rgba(255, 255, 255, 0.7)',
-                transition: 'all 0.2s',
-                '&:hover': {
-                  borderBottomColor: 'white',
-                  opacity: 0.9,
-                },
-              }}
-            >
-              Try for free
-            </Link>
-          </Typography>
-          <Bolt sx={{ fontSize: 28, color: 'white', opacity: 0.9 }} />
-        </Box>
+            Voltage Park AI Factory
+          </Link>
+        </Typography>
       </Container>
     </Box>
   );

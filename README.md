@@ -1,6 +1,6 @@
-# Explained in 60 Seconds
+# Doc Q&A
 
-An AI-powered micro-podcast generator that transforms any topic into an engaging 60-second audio podcast. Built with Next.js 15, TypeScript, and Material UI, integrated with Voltage Park AI Factory.
+An AI-powered document analysis system that transforms your documents into an intelligent Q&A interface. Upload PDFs, contracts, papers, and more, then ask questions to get instant AI-powered answers. Built with Next.js 15, TypeScript, and Material UI, integrated with Voltage Park AI Factory.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org)
 [![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://react.dev)
@@ -9,13 +9,14 @@ An AI-powered micro-podcast generator that transforms any topic into an engaging
 
 ## Features
 
-- 🎙️ **AI Podcast Generation** - Enter any topic and get a professionally narrated 60-second podcast
-- 🎨 **Modern UI** - Sleek Material UI design with dark/light mode
-- 📱 **Fully Responsive** - Optimized for all devices with touch-friendly controls
-- 🎧 **Audio Player** - Custom player with progress tracking and timestamps
-- ⚡ **Real-time Status** - Live polling to track generation progress
-- 📥 **Downloadable** - Save generated podcasts locally
+- 📄 **Document Upload** - Support for PDF, DOC, DOCX, and TXT files
+- 🤖 **AI-Powered Q&A** - Ask questions and get intelligent answers from your documents
+- 🎨 **Modern UI** - Sleek Material UI design with dark/light mode and green accent colors
+- 📱 **Fully Responsive** - Optimized for all devices
+- ⚡ **Real-time Processing** - Live document indexing and vector embedding
+- 🔍 **Semantic Search** - Intelligent retrieval of relevant document chunks
 - 🌐 **Unified Architecture** - Single Next.js app with API routes and frontend
+- 📊 **Multi-Document Collections** - Organize documents into docsets for topic-specific Q&A
 
 ## Quick Start
 
@@ -30,7 +31,7 @@ An AI-powered micro-podcast generator that transforms any topic into an engaging
 ```bash
 # 1. Clone the repository
 git clone <your-repo-url>
-cd explained-in-60-sec
+cd doc-qa
 
 # 2. Install dependencies
 npm install
@@ -50,100 +51,174 @@ npm run dev
 Create a `.env.local` file in the root directory:
 
 ```env
-VPSTUDIO_API_URL=your-voltagepark-api-url
-VPSTUDIO_BEARER_TOKEN=your-bearer-token
+DOCSETS_API_URL=https://060de239.voltagepark.studio
+DOCSETS_BEARER_TOKEN=your-bearer-token
 ```
 
 Get your credentials from [Voltage Park](https://voltagepark.com).
 
 ## Usage
 
-1. **Enter a Topic**: Type any topic (up to 128 characters) you want explained
-2. **Generate**: Click the generate button and wait ~30-60 seconds
-3. **Listen**: Play your podcast directly in the browser
-4. **Download**: Save the podcast for offline listening
+### 1. Create a Document Collection (Docset)
 
-### Example Topics
+Give your collection a name and optional description:
+- "Research Papers"
+- "Legal Documents"
+- "User Manuals"
 
-- "How quantum computers work"
-- "The history of the Roman Empire"
-- "Machine learning basics"
-- "Photosynthesis in plants"
+### 2. Upload Documents
+
+Upload one or more documents (PDF, DOC, DOCX, TXT). The system will:
+- Extract text content
+- Chunk the document into semantic sections
+- Create vector embeddings for semantic search
+- Index for fast retrieval
+
+### 3. Ask Questions
+
+Ask natural language questions about your documents:
+- "What are the main findings?"
+- "Summarize the key points"
+- "What does section 3 say about...?"
+- "Explain the methodology used"
+
+The AI will retrieve relevant context and generate comprehensive answers.
 
 ## Technology Stack
 
 - **[Next.js 15](https://nextjs.org)** - React framework with App Router
 - **[React 19](https://react.dev)** - UI library
 - **[TypeScript](https://typescriptlang.org)** - Type safety
-- **[Material UI v5](https://mui.com)** - Component library
+- **[Material UI v5](https://mui.com)** - Component library with custom green theme
 - **[Emotion](https://emotion.sh)** - CSS-in-JS styling
-- **[Voltage Park AI Factory](https://voltagepark.com)** - AI voice generation
+- **[Voltage Park AI Factory](https://voltagepark.com)** - Document processing and Q&A generation
 
 ## Project Structure
 
 ```
-explained-in-60-sec/
+doc-qa/
 ├── app/
 │   ├── api/
-│   │   ├── podcast/
-│   │   │   ├── route.ts              # POST - Create podcast
-│   │   │   └── [id]/route.ts         # GET - Get status
-│   │   └── health/route.ts           # Health check
+│   │   ├── docsets/
+│   │   │   ├── route.ts                    # POST - Create docset, GET - List docsets
+│   │   │   └── [id]/
+│   │   │       ├── route.ts                # GET - Get docset details
+│   │   │       ├── ingest/route.ts         # POST - Upload document
+│   │   │       └── generate/route.ts       # POST - Generate answer
+│   │   └── health/route.ts                 # Health check
 │   ├── components/
-│   │   ├── AudioCard.tsx             # Audio player component
-│   │   └── ThemeRegistry.tsx         # Theme provider
+│   │   ├── AnswerCard.tsx                  # Answer display component
+│   │   ├── DocumentUpload.tsx              # Document upload component
+│   │   ├── Header.tsx                      # App header with branding
+│   │   ├── Banner.tsx                      # Voltage Park banner
+│   │   ├── Footer.tsx                      # App footer
+│   │   ├── ClientLayout.tsx                # Layout wrapper
+│   │   └── ThemeRegistry.tsx               # Theme provider
 │   ├── lib/
-│   │   ├── theme.ts                  # Material UI theme
-│   │   └── podcasts-store.ts         # State management
-│   ├── layout.tsx                    # Root layout
-│   └── page.tsx                      # Home page
+│   │   ├── theme.ts                        # Material UI theme (green accents)
+│   │   └── docsets-store.ts                # State management
+│   ├── layout.tsx                          # Root layout
+│   └── page.tsx                            # Home page with stepper interface
 ├── public/
-│   ├── audio/                        # Example audio files
 │   └── favicon.svg
-├── .env.example                      # Environment template
-├── next.config.js                    # Next.js config
-├── tsconfig.json                     # TypeScript config
+├── .env.example                            # Environment template
+├── next.config.js                          # Next.js config
+├── tsconfig.json                           # TypeScript config
 └── package.json
 ```
 
 ## API Endpoints
 
-### POST /api/podcast
+### POST /api/docsets
 
-Create a new podcast generation job.
+Create a new document collection.
 
 **Request:**
 ```json
 {
-  "topic": "Quantum Computing"
+  "name": "Research Papers",
+  "description": "Analysis of attention-is-all-you-need paper",
+  "factory_id": "default",
+  "user_id": "anonymous"
 }
 ```
 
 **Response:**
 ```json
 {
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "status": "processing",
-  "topic": "Quantum Computing"
+  "docset_id": "3da8233a-b11b-4c89-a000-95a97735a512",
+  "name": "Research Papers",
+  "status": "created"
 }
 ```
 
-### GET /api/podcast/:id
+### GET /api/docsets
 
-Get the status of a podcast job.
+List all document collections.
 
-**Response (completed):**
+**Response:**
 ```json
 {
-  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "docsets": [
+    {
+      "docset_id": "3da8233a-b11b-4c89-a000-95a97735a512",
+      "name": "Research Papers",
+      "description": "Analysis of attention-is-all-you-need paper",
+      "status": "ready",
+      "document_count": 1,
+      "created_at": "2025-11-01T14:20:47.000848"
+    }
+  ],
+  "count": 1
+}
+```
+
+### POST /api/docsets/:id/ingest
+
+Upload and process a document.
+
+**Request:** (multipart/form-data)
+- `file`: Document file (PDF, DOC, DOCX, TXT)
+- `source_type`: Document type (default: "document")
+- `factory_id`: Factory ID (default: "default")
+- `doc_tags`: Comma-separated tags (optional)
+
+**Response:**
+```json
+{
+  "doc_id": "878f4019-9a1b-4c93-b1a0-4958212a8786",
+  "status": "processed",
+  "chunks": 35,
+  "vectors": 35,
+  "processing_time_ms": 48234
+}
+```
+
+### POST /api/docsets/:id/generate
+
+Generate an answer to a question about the documents.
+
+**Request:**
+```json
+{
+  "content_prompt": "What is this paper about?",
+  "format_prompt": "Provide a detailed explanation with bullet points",
+  "section_label": "Paper Summary",
+  "top_k": 8
+}
+```
+
+**Response:**
+```json
+{
+  "docset_id": "3da8233a-b11b-4c89-a000-95a97735a512",
+  "generation_id": "1adbcfc0-e5d6-40c6-a11b-e674f183bad6",
+  "section_label": "Paper Summary",
+  "content": "## Summary\n\nThis paper introduces...",
+  "word_count": 339,
   "status": "completed",
-  "topic": "Quantum Computing",
-  "title": "60 seconds on: Quantum Computing",
-  "summary": "An AI-generated deep dive into Quantum Computing...",
-  "audioUrl": "https://...",
-  "duration": 60,
-  "createdAt": "2025-10-20T...",
-  "completedAt": "2025-10-20T..."
+  "processing_time_ms": 20931,
+  "created_at": "2025-11-01T14:20:47.000848"
 }
 ```
 
@@ -155,8 +230,8 @@ Health check endpoint.
 ```json
 {
   "status": "ok",
-  "timestamp": "2025-10-20T...",
-  "podcasts": 3
+  "timestamp": "2025-11-01T...",
+  "docsets": 3
 }
 ```
 
@@ -191,18 +266,55 @@ Or deploy to:
 - [Google Cloud Run](https://cloud.google.com/run)
 - Any Node.js hosting platform
 
-**Important:** Set environment variables (`VPSTUDIO_API_URL` and `VPSTUDIO_BEARER_TOKEN`) in your hosting platform's dashboard.
+**Important:** Set environment variables (`DOCSETS_API_URL` and `DOCSETS_BEARER_TOKEN`) in your hosting platform's dashboard.
 
 ## Production Notes
 
-The application currently uses in-memory storage for podcast jobs. For production deployment, consider:
+The application currently uses in-memory storage for docsets and generations. For production deployment, consider:
 
-1. **Database Integration** - Replace `podcasts-store.ts` with PostgreSQL, MongoDB, or Redis
-2. **CDN for Audio** - Store generated audio files in S3 or similar
+1. **Database Integration** - Replace `docsets-store.ts` with PostgreSQL, MongoDB, or Redis
+2. **Document Storage** - Store uploaded documents in S3 or similar object storage
 3. **Rate Limiting** - Implement API rate limits to prevent abuse
-4. **User Authentication** - Add login/signup for tracking user podcasts
-5. **Caching** - Cache completed podcasts to reduce API calls
+4. **User Authentication** - Add login/signup for user-specific docsets
+5. **Caching** - Cache generated answers to reduce API calls
 6. **Monitoring** - Add logging and error tracking (e.g., Sentry)
+7. **Vector Database** - For large-scale deployments, consider dedicated vector DB (Pinecone, Weaviate)
+
+## API Integration Example
+
+Using the Voltage Park API directly (via curl):
+
+```bash
+# 1. Create a docset
+curl -X POST "https://060de239.voltagepark.studio/docsets/" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "factory_id": "default",
+    "name": "Attention Paper Analysis",
+    "metadata": {
+      "user_id": "user123",
+      "description": "Analysis of attention-is-all-you-need paper"
+    }
+  }'
+
+# 2. Upload a document
+curl -X POST "https://060de239.voltagepark.studio/docsets/DOCSET_ID/ingest" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F "file=@paper.pdf" \
+  -F "source_type=contract" \
+  -F "factory_id=default" \
+  -F "doc_tags=paper,attention,nlp"
+
+# 3. Ask a question
+curl -X POST "https://060de239.voltagepark.studio/docsets/DOCSET_ID/generate?factory_id=default" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content_prompt": "What is this paper about?",
+    "top_k": 8
+  }'
+```
 
 ## Contributing
 

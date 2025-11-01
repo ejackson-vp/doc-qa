@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
-import { podcasts } from '@/app/lib/podcasts-store';
+import { docsets, generations } from '@/app/lib/docsets-store';
 
 export async function GET() {
   return NextResponse.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    podcasts: podcasts.size
+    docsets: docsets.size,
+    generations: generations.size
   });
 }
 

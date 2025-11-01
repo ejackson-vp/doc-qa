@@ -4,15 +4,15 @@ export const getTheme = (mode: 'light' | 'dark') => createTheme({
   palette: {
     mode,
     primary: {
-      main: mode === 'light' ? '#5e35b1' : '#7c4dff',
-      light: '#9162e4',
-      dark: '#4527a0',
+      main: mode === 'light' ? '#10b981' : '#34d399',
+      light: '#6ee7b7',
+      dark: '#059669',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: mode === 'light' ? '#1e88e5' : '#42a5f5',
-      light: '#4fc3f7',
-      dark: '#1565c0',
+      main: mode === 'light' ? '#14b8a6' : '#2dd4bf',
+      light: '#5eead4',
+      dark: '#0d9488',
       contrastText: '#ffffff',
     },
     background: {

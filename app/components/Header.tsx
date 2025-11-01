@@ -20,9 +20,10 @@ import {
   Brightness4,
   Brightness7,
   Menu as MenuIcon,
-  Mic,
+  Description,
 } from '@mui/icons-material';
 import Link from 'next/link';
+import { track } from '@vercel/analytics';
 
 interface HeaderProps {
   onThemeToggle: () => void;
@@ -41,6 +42,7 @@ export default function Header({ onThemeToggle }: HeaderProps) {
     const element = document.getElementById('create-section');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      track('ask_question_clicked', { location: 'header' });
     }
     setMobileOpen(false);
   };
@@ -55,7 +57,7 @@ export default function Header({ onThemeToggle }: HeaderProps) {
         </ListItem>
         <ListItem disablePadding>
           <ListItemButton onClick={handleScrollToCreate}>
-            <ListItemText primary="Create your own" />
+            <ListItemText primary="Ask a question" />
           </ListItemButton>
         </ListItem>
       </List>
@@ -99,65 +101,36 @@ export default function Header({ onThemeToggle }: HeaderProps) {
               gap: { xs: 1, sm: 1.5 },
             }}
           >
-            <Mic 
+            <Description 
               sx={{ 
                 fontSize: { xs: 28, sm: 36 },
                 color: 'primary.main',
               }} 
             />
-            <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-              <Typography
-                sx={{
-                  fontWeight: 700,
-                  fontSize: { xs: '0.65rem', sm: '0.75rem' },
-                  color: 'text.primary',
-                  letterSpacing: '0.05em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Explained
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5, mt: 0.25 }}>
-                <Typography
-                  sx={{
-                    fontWeight: 700,
-                    fontSize: { xs: '0.65rem', sm: '0.75rem' },
-                    color: 'text.primary',
-                    letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  in
-                </Typography>
-                <Typography
-                  sx={{
-                    fontWeight: 800,
-                    fontSize: { xs: '0.65rem', sm: '0.75rem' },
-                    color: 'primary.main',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  60
-                </Typography>
-              </Box>
-              <Typography
-                sx={{
-                  fontWeight: 700,
-                  fontSize: { xs: '0.65rem', sm: '0.75rem' },
-                  color: 'text.primary',
-                  letterSpacing: '0.05em',
-                  textTransform: 'uppercase',
-                  mt: 0.25,
-                }}
-              >
-                Seconds
-              </Typography>
-            </Box>
+            <Typography
+              sx={{
+                fontWeight: 700,
+                fontSize: { xs: '1.1rem', sm: '1.3rem' },
+                color: 'text.primary',
+                letterSpacing: '-0.02em',
+                '& span': {
+                  color: 'primary.main',
+                },
+              }}
+            >
+              Doc<span>QA</span>
+            </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <IconButton
-              onClick={onThemeToggle}
+              onClick={() => {
+                track('theme_toggled', { 
+                  from: theme.palette.mode,
+                  to: theme.palette.mode === 'light' ? 'dark' : 'light',
+                });
+                onThemeToggle();
+              }}
               color="inherit"
               aria-label={`Switch to ${theme.palette.mode === 'light' ? 'dark' : 'light'} mode`}
             >
@@ -171,7 +144,7 @@ export default function Header({ onThemeToggle }: HeaderProps) {
                 onClick={handleScrollToCreate}
                 sx={{ ml: 1 }}
               >
-                Create your own
+                Ask a question
               </Button>
             )}
           </Box>

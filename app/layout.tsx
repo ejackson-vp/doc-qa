@@ -3,8 +3,8 @@ import { Analytics } from '@vercel/analytics/next';
 import ThemeRegistry from './components/ThemeRegistry';
 
 export const metadata: Metadata = {
-  title: 'Explained in 60 seconds - AI-Powered Micro Podcasts',
-  description: 'Turn any topic into a crisp 60-second podcast—instantly. Type a topic and get your AI-generated mini-podcast in under a minute.',
+  title: 'Doc Q&A - AI-Powered Document Analysis',
+  description: 'Upload documents and get instant AI-powered answers to your questions. Analyze PDFs, contracts, papers, and more with intelligent document Q&A.',
 };
 
 export default function RootLayout({

@@ -30,10 +30,10 @@ export default function Footer() {
         >
           <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
             <Typography variant="h6" fontWeight={700} gutterBottom>
-              Explained in 60 seconds
+              Doc Q&A
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              AI-powered micro podcasts
+              AI-powered document analysis
             </Typography>
           </Box>
 
@@ -48,6 +48,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 size="small"
+                onClick={() => track('social_link_clicked', { platform: 'linkedin' })}
               >
                 <LinkedIn />
               </IconButton>
@@ -57,6 +58,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 size="small"
+                onClick={() => track('social_link_clicked', { platform: 'github' })}
               >
                 <GitHub />
               </IconButton>
