@@ -73,60 +73,81 @@ export default function DocumentUpload({ docsetId, onUploadComplete }: DocumentU
     try {
       let currentDocsetId = docsetId;
 
-      // Create docset if it doesn't exist
+      // Create docset and upload document in one call if docset doesn't exist
       if (!currentDocsetId) {
         setIsCreatingDocset(true);
         const docsetName = generateRandomDocsetName(file.name);
         
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('name', docsetName);
+        formData.append('description', `Document collection for ${file.name}`);
+        formData.append('factory_id', 'default');
+        formData.append('user_id', 'anonymous');
+        formData.append('top_k', '8');
+        
         const docsetResponse = await fetch('/api/docsets', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            name: docsetName,
-            description: `Document collection for ${file.name}`,
-            factory_id: 'default',
-            user_id: 'anonymous'
-          }),
+          body: formData,
         });
 
         if (!docsetResponse.ok) {
           const errorData = await docsetResponse.json();
-          throw new Error(errorData.error || 'Failed to create docset');
+          throw new Error(errorData.error || 'Failed to create docset and upload document');
         }
 
         const docsetData = await docsetResponse.json();
-        currentDocsetId = docsetData.docset_id;
-        setIsCreatingDocset(false);
-      }
-
-      // Upload document
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('source_type', 'contract');
-      formData.append('factory_id', 'default');
-
-      const response = await fetch(`/api/docsets/${currentDocsetId}/ingest`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
-      }
-
-      const data = await response.json();
-      setUploadProgress(100);
-      
-      setTimeout(() => {
-        onUploadComplete(currentDocsetId!, data.doc_id, data.chunks, file.name);
-        setFile(null);
-        setIsUploading(false);
-        setUploadProgress(0);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
+        // Extract docset_id from response (could be in docset_id or job_id field)
+        currentDocsetId = docsetData.docset_id || docsetData.job_id || docsetData.id;
+        
+        if (!currentDocsetId) {
+          throw new Error('Failed to get docset ID from response');
         }
-      }, 500);
+        
+        setIsCreatingDocset(false);
+        
+        // File upload is complete, use the response data
+        setUploadProgress(100);
+        const finalDocsetId = currentDocsetId; // Capture for closure
+        setTimeout(() => {
+          onUploadComplete(finalDocsetId, docsetData.doc_id || docsetData.job_id || finalDocsetId, docsetData.chunks || 0, file.name);
+          setFile(null);
+          setIsUploading(false);
+          setUploadProgress(0);
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+        }, 500);
+      } else {
+        // Upload document to existing docset
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('source_type', 'contract');
+        formData.append('factory_id', 'default');
+
+        const response = await fetch(`/api/docsets/${currentDocsetId}/ingest`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Upload failed');
+        }
+
+        const data = await response.json();
+        setUploadProgress(100);
+        
+        setTimeout(() => {
+          onUploadComplete(currentDocsetId!, data.doc_id, data.chunks, file.name);
+          setFile(null);
+          setIsUploading(false);
+          setUploadProgress(0);
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+        }, 500);
+      }
     } catch (err) {
       const error = err as Error;
       setError(error.message || 'Upload failed');

@@ -114,12 +114,32 @@ export default function Home() {
     setError(null);
 
     try {
+      // Build OpenAI-style messages array from conversation history
+      const messages = [];
+      
+      // Add all previous Q&As
+      for (const gen of generations) {
+        messages.push({
+          role: 'user',
+          content: gen.question
+        });
+        messages.push({
+          role: 'assistant',
+          content: gen.content
+        });
+      }
+      
+      // Add current question
+      messages.push({
+        role: 'user',
+        content: currentQuestion
+      });
+
       const response = await fetch(`/api/docsets/${currentDocset.docset_id}/generate?factory_id=default`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          content_prompt: currentQuestion,
-          // format_prompt: FORMAT_PROMPT,
+          messages: messages, // Send full conversation history
           top_k: 8
         }),
       });

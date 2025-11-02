@@ -32,6 +32,7 @@ export async function POST(
     const source_type = formData.get('source_type') as string || 'contract';
     const factory_id = formData.get('factory_id') as string || docset.factory_id;
     const doc_tags = formData.get('doc_tags') as string || '';
+    const top_k = formData.get('top_k') as string || '8';
 
     if (!file) {
       return NextResponse.json(
@@ -40,19 +41,40 @@ export async function POST(
       );
     }
 
-    // Forward to upstream API
+    // Prepare form data for upstream API using /vpstudio/transform endpoint
     const upstreamFormData = new FormData();
-    upstreamFormData.append('file', file);
-    upstreamFormData.append('source_type', source_type);
-    upstreamFormData.append('factory_id', factory_id);
-    if (doc_tags) {
-      upstreamFormData.append('doc_tags', doc_tags);
-    }
+    upstreamFormData.append('files', file);
+    
+    // Prepare data field
+    const dataField = {
+      docset_id: id,
+      text: {
+        content_prompt: 'What is this document about?'
+      },
+      documents: [{
+        source: 'upload',
+        file_index: 0
+      }]
+    };
+    upstreamFormData.append('data', JSON.stringify(dataField));
+    
+    // Prepare factory_settings
+    const factorySettings = {
+      top_k: parseInt(top_k, 10)
+    };
+    upstreamFormData.append('factory_settings', JSON.stringify(factorySettings));
+    
+    // Prepare metadata
+    const metadata = {
+      user_id: docset.user_id
+    };
+    upstreamFormData.append('metadata', JSON.stringify(metadata));
 
-    const response = await fetch(`${API_BASE_URL}/docsets/${id}/ingest`, {
+    const response = await fetch(`${API_BASE_URL}/vpstudio/transform`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${BEARER_TOKEN}`,
+        'X-Factory-Id': factory_id,
       },
       body: upstreamFormData,
     });
@@ -81,28 +103,45 @@ export async function POST(
     }
 
     const data = await response.json();
+    console.log('Ingest response:', JSON.stringify(data, null, 2));
+    
+    const jobId = data.id || data.job_id;
+    const docId = data.doc_id || jobId;
+
+    // Map upstream status
+    const upstreamStatus = data.status;
+    let docsetStatus: 'created' | 'ingesting' | 'ready' | 'failed' = 'ingesting';
+    if (upstreamStatus === 'completed') {
+      docsetStatus = 'ready';
+    } else if (upstreamStatus === 'failed' || data.error) {
+      docsetStatus = 'failed';
+    } else if (upstreamStatus === 'queued' || upstreamStatus === 'ingesting' || upstreamStatus === 'generating') {
+      docsetStatus = 'ingesting';
+    }
 
     // Update local cache
     docset.documents.push({
-      doc_id: data.doc_id,
-      status: data.status,
+      doc_id: docId,
+      status: data.status || 'processing',
       source_type,
       doc_tags: doc_tags ? doc_tags.split(',').map(t => t.trim()) : [],
       chunks: data.chunks,
       vectors: data.vectors,
       uploadedAt: new Date().toISOString(),
     });
-    docset.status = 'ready';
+    docset.status = docsetStatus;
     docset.updatedAt = new Date().toISOString();
     docsets.set(id, docset);
 
     return NextResponse.json({
-      doc_id: data.doc_id,
-      status: data.status,
+      job_id: jobId,
+      doc_id: docId,
+      status: data.status || 'processing',
       chunks: data.chunks,
       vectors: data.vectors,
       processing_time_ms: data.processing_time_ms,
       message: data.message,
+      ...data,
     }, { status: 200 });
 
   } catch (error) {

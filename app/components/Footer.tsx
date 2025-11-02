@@ -30,7 +30,7 @@ export default function Footer() {
         >
           <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
             <Typography variant="h6" fontWeight={700} gutterBottom>
-              Doc Q&A
+              DocQA
             </Typography>
             <Typography variant="body2" color="text.secondary">
               AI-powered document analysis
