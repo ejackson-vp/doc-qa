@@ -1,4 +1,6 @@
 import { ImageResponse } from 'next/og';
+// eslint-disable-next-line @next/next/no-img-element
+import React from 'react';
 
 export const runtime = 'edge';
 

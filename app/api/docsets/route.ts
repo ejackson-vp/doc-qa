@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { docsets } from '@/app/lib/docsets-store';
 
 const API_BASE_URL = process.env.DOCSETS_API_URL || 'https://060de239.voltagepark.studio';
 const BEARER_TOKEN = process.env.DOCSETS_BEARER_TOKEN;
@@ -164,23 +163,16 @@ export async function POST(request: NextRequest) {
     
     console.log('Extracted: docset_id:', docsetId, 'job_id:', jobId, 'status:', docsetStatus);
 
-    // Store in local cache
-    docsets.set(docsetId, {
-      id: docsetId,
-      status: docsetStatus,
-      name: name || file.name,
-      description: description || '',
-      factory_id,
-      user_id,
-      documents: [],
-      createdAt: new Date().toISOString(),
-    });
-
+    // Return docset info for client to store
     return NextResponse.json({
       docset_id: docsetId,
       job_id: jobId,
       name: name || file.name,
       status: docsetStatus,
+      factory_id,
+      user_id,
+      description: description || '',
+      created_at: new Date().toISOString(),
       ...data, // Include any additional fields from upstream API
     }, { status: 201 });
 
@@ -194,28 +186,13 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
-  try {
-    // Return all docsets from local cache
-    const allDocsets = Array.from(docsets.values()).map(docset => ({
-      docset_id: docset.id,
-      name: docset.name,
-      description: docset.description,
-      status: docset.status,
-      document_count: docset.documents.length,
-      created_at: docset.createdAt,
-    }));
-
-    return NextResponse.json({
-      docsets: allDocsets,
-      count: allDocsets.length,
-    });
-  } catch (error) {
-    console.error('Error fetching docsets:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch docsets' },
-      { status: 500 }
-    );
-  }
+export async function GET() {
+  // Server is stateless - docsets are stored client-side
+  // This endpoint exists for backward compatibility but returns empty
+  return NextResponse.json({
+    docsets: [],
+    count: 0,
+    message: 'Server is stateless. Docsets are managed client-side.'
+  });
 }
 

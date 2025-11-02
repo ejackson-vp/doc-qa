@@ -53,9 +53,22 @@ Create a `.env.local` file in the root directory:
 ```env
 DOCSETS_API_URL=https://060de239.voltagepark.studio
 DOCSETS_BEARER_TOKEN=your-bearer-token
+
+# Optional: Concurrency control (defaults shown)
+MAX_CONCURRENT_INGESTIONS=3
+MAX_CONCURRENT_GENERATIONS=5
 ```
 
 Get your credentials from [Voltage Park](https://voltagepark.com).
+
+#### Concurrency Control
+
+The application includes built-in concurrency limiting to prevent server overload:
+
+- **`MAX_CONCURRENT_INGESTIONS`** (default: 3) - Maximum number of simultaneous document uploads/processing
+- **`MAX_CONCURRENT_GENERATIONS`** (default: 5) - Maximum number of simultaneous answer generations
+
+When limits are reached, requests are automatically queued and processed as capacity becomes available. This ensures fair processing without rejecting requests. Adjust these values based on your server capacity and Voltage Park API rate limits.
 
 ## Usage
 
@@ -235,6 +248,33 @@ Health check endpoint.
 }
 ```
 
+### GET /api/concurrency
+
+Get current concurrency limiter statistics for document ingestion and answer generation.
+
+**Response:**
+```json
+{
+  "timestamp": "2025-11-02T...",
+  "ingestion": {
+    "name": "Ingest",
+    "maxConcurrent": 3,
+    "activeCount": 1,
+    "queuedCount": 0,
+    "availableSlots": 2,
+    "utilizationPercent": 33
+  },
+  "generation": {
+    "name": "Generate",
+    "maxConcurrent": 5,
+    "activeCount": 2,
+    "queuedCount": 1,
+    "availableSlots": 3,
+    "utilizationPercent": 40
+  }
+}
+```
+
 ## Development
 
 ```bash
@@ -270,15 +310,27 @@ Or deploy to:
 
 ## Production Notes
 
-The application currently uses in-memory storage for docsets and generations. For production deployment, consider:
+The application is designed with a **stateless architecture**:
 
-1. **Database Integration** - Replace `docsets-store.ts` with PostgreSQL, MongoDB, or Redis
-2. **Document Storage** - Store uploaded documents in S3 or similar object storage
-3. **Rate Limiting** - Implement API rate limits to prevent abuse
-4. **User Authentication** - Add login/signup for user-specific docsets
-5. **Caching** - Cache generated answers to reduce API calls
-6. **Monitoring** - Add logging and error tracking (e.g., Sentry)
-7. **Vector Database** - For large-scale deployments, consider dedicated vector DB (Pinecone, Weaviate)
+### Server-Side (Stateless)
+- **Concurrency limiting only** - Server only maintains in-memory concurrency queues
+- **Pure API proxy** - All requests are forwarded to Voltage Park API
+- **Horizontal scaling** - Multiple server instances work independently
+- **No data loss on restart** - Client state persists across server restarts
+
+### Client-Side State Management
+- **Docsets** - Stored in browser memory during session
+- **Generations** - Q&A history maintained in React state
+- **Persistence** - Consider adding localStorage for session recovery
+
+### Additional Production Considerations
+
+1. **Client State Persistence** - Add localStorage/IndexedDB for persistent client state
+2. **User Authentication** - Add login/signup with backend user session management  
+3. **Rate Limiting** - Implement per-user or per-IP rate limits
+4. **Monitoring** - Add logging and error tracking (e.g., Sentry)
+5. **CDN** - Deploy static assets to CDN for better performance
+6. **Redis (Optional)** - For distributed concurrency limiting across multiple servers
 
 ## API Integration Example
 
