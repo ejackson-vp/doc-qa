@@ -10,7 +10,24 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const docset = docsets.get(id);
+    let docset = docsets.get(id);
+
+    // Special handling for sample docset - create it on-the-fly if needed
+    const SAMPLE_DOCSET_ID = process.env.NEXT_PUBLIC_SAMPLE_DOCSET_ID;
+    if (!docset && id === SAMPLE_DOCSET_ID) {
+      // Create sample docset entry in store
+      docset = {
+        id: SAMPLE_DOCSET_ID,
+        status: 'ready',
+        name: 'Attention Is All You Need (Sample)',
+        description: 'Sample document for demonstration',
+        factory_id: 'default',
+        user_id: 'sample_user',
+        documents: [],
+        createdAt: new Date().toISOString(),
+      };
+      docsets.set(SAMPLE_DOCSET_ID, docset);
+    }
 
     if (!docset) {
       return NextResponse.json(

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import {
   AppBar,
   Toolbar,
-  Typography,
   Button,
   IconButton,
   Box,
@@ -15,12 +14,12 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Chip,
 } from '@mui/material';
 import {
   Brightness4,
   Brightness7,
   Menu as MenuIcon,
-  Description,
 } from '@mui/icons-material';
 import Link from 'next/link';
 import { track } from '@vercel/analytics';
@@ -57,7 +56,7 @@ export default function Header({ onThemeToggle }: HeaderProps) {
         </ListItem>
         <ListItem disablePadding>
           <ListItemButton onClick={handleScrollToCreate}>
-            <ListItemText primary="Ask a question" />
+            <ListItemText primary="Try Demo" />
           </ListItemButton>
         </ListItem>
       </List>
@@ -71,14 +70,14 @@ export default function Header({ onThemeToggle }: HeaderProps) {
         elevation={0}
         color="default"
         sx={{
-          backdropFilter: 'blur(10px)',
+          backdropFilter: 'blur(12px)',
           backgroundColor: theme.palette.mode === 'light' 
-            ? 'rgba(255, 255, 255, 0.8)' 
-            : 'rgba(30, 30, 30, 0.8)',
+            ? 'rgba(255, 255, 255, 0.85)' 
+            : 'rgba(10, 10, 10, 0.85)',
           borderBottom: `1px solid ${theme.palette.divider}`,
         }}
       >
-        <Toolbar>
+        <Toolbar sx={{ py: 1 }}>
           {isMobile && (
             <IconButton
               color="inherit"
@@ -99,31 +98,64 @@ export default function Header({ onThemeToggle }: HeaderProps) {
               textDecoration: 'none',
               display: 'flex',
               alignItems: 'center',
-              gap: { xs: 1, sm: 1.5 },
+              gap: 2,
             }}
           >
-            <Description 
-              sx={{ 
-                fontSize: { xs: 28, sm: 36 },
-                color: 'primary.main',
-              }} 
-            />
-            <Typography
+            {/* Logo */}
+            <Box
               sx={{
-                fontWeight: 700,
-                fontSize: { xs: '1.1rem', sm: '1.3rem' },
-                color: 'text.primary',
-                letterSpacing: '-0.02em',
-                '& span': {
-                  color: 'primary.main',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 40,
+                height: 40,
+                borderRadius: '10px',
+                background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                boxShadow: theme.palette.mode === 'light'
+                  ? '0 4px 12px -2px rgba(37, 99, 235, 0.3)'
+                  : '0 4px 12px -2px rgba(59, 130, 246, 0.4)',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  width: '16px',
+                  height: '20px',
+                  borderRadius: '2px',
+                  border: '2.5px solid white',
+                  borderBottom: '4px solid white',
                 },
               }}
-            >
-              Doc<span>QA</span>
-            </Typography>
+            />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Box
+                sx={{
+                  fontWeight: 800,
+                  fontSize: { xs: '1.25rem', sm: '1.4rem' },
+                  color: 'text.primary',
+                  letterSpacing: '-0.03em',
+                }}
+              >
+                DocQA
+              </Box>
+              <Chip 
+                label="DEMO" 
+                size="small"
+                sx={{ 
+                  height: 20,
+                  fontSize: '0.65rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.05em',
+                  bgcolor: theme.palette.mode === 'light' 
+                    ? 'rgba(37, 99, 235, 0.1)' 
+                    : 'rgba(59, 130, 246, 0.2)',
+                  color: 'primary.main',
+                  border: 'none',
+                }}
+              />
+            </Box>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <IconButton
               onClick={() => {
                 track('theme_toggled', { 
@@ -134,6 +166,10 @@ export default function Header({ onThemeToggle }: HeaderProps) {
               }}
               color="inherit"
               aria-label={`Switch to ${theme.palette.mode === 'light' ? 'dark' : 'light'} mode`}
+              sx={{
+                width: 44,
+                height: 44,
+              }}
             >
               {theme.palette.mode === 'light' ? <Brightness4 /> : <Brightness7 />}
             </IconButton>
@@ -143,9 +179,8 @@ export default function Header({ onThemeToggle }: HeaderProps) {
                 variant="contained"
                 color="primary"
                 onClick={handleScrollToCreate}
-                sx={{ ml: 1 }}
               >
-                Ask a question
+                Try Demo
               </Button>
             )}
           </Box>

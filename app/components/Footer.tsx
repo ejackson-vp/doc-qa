@@ -1,7 +1,7 @@
 'use client';
 
-import { Box, Container, Typography, Link, IconButton, Divider, Button } from '@mui/material';
-import { GitHub, LinkedIn } from '@mui/icons-material';
+import { Box, Container, Typography, Link, IconButton, Stack, alpha } from '@mui/material';
+import { GitHub, LinkedIn, OpenInNew } from '@mui/icons-material';
 import { track } from '@vercel/analytics';
 
 export default function Footer() {
@@ -9,39 +9,58 @@ export default function Footer() {
     <Box
       component="footer"
       sx={{
-        py: 6,
+        py: 8,
         px: 2,
         mt: 'auto',
-        backgroundColor: (theme) =>
+        borderTop: '1px solid',
+        borderColor: 'divider',
+        bgcolor: (theme) =>
           theme.palette.mode === 'light'
-            ? theme.palette.grey[100]
-            : theme.palette.grey[900],
+            ? '#fafafa'
+            : alpha(theme.palette.background.paper, 0.3),
       }}
     >
       <Container maxWidth="lg">
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            justifyContent: 'space-between',
-            alignItems: { xs: 'center', sm: 'flex-start' },
-            gap: 3,
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: '1.5fr 1fr' },
+            gap: { xs: 4, md: 8 },
+            mb: 6,
           }}
         >
-          <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-            <Typography variant="h6" fontWeight={700} gutterBottom>
-              DocQA
+          {/* Left Column */}
+          <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+              <Box
+                sx={{
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 36,
+                  height: 36,
+                  borderRadius: '8px',
+                  background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    width: '14px',
+                    height: '18px',
+                    borderRadius: '2px',
+                    border: '2.5px solid white',
+                    borderBottom: '3.5px solid white',
+                  },
+                }}
+              />
+              <Typography variant="h6" fontWeight={800} sx={{ letterSpacing: '-0.02em' }}>
+                DocQA
+              </Typography>
+            </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3, maxWidth: '400px' }}>
+              Intelligent document Q&A powered by agentic RAG. Built with a Voltage Park AI Factory for enterprise-grade performance and security.
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Agentic RAG demo built with a Voltage Park AI Factory
-            </Typography>
-          </Box>
-
-          <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-            <Typography variant="subtitle2" fontWeight={600} gutterBottom>
-              Voltage Park
-            </Typography>
-            <Box>
+            <Stack direction="row" spacing={1}>
               <IconButton
                 aria-label="LinkedIn"
                 href="https://www.linkedin.com/company/voltage-park/"
@@ -49,8 +68,16 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 size="small"
                 onClick={() => track('social_link_clicked', { platform: 'linkedin_company' })}
+                sx={{
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  '&:hover': {
+                    borderColor: 'primary.main',
+                    bgcolor: alpha('#2563eb', 0.08),
+                  },
+                }}
               >
-                <LinkedIn />
+                <LinkedIn sx={{ fontSize: 20 }} />
               </IconButton>
               <IconButton
                 aria-label="GitHub"
@@ -59,46 +86,87 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 size="small"
                 onClick={() => track('social_link_clicked', { platform: 'github_org' })}
+                sx={{
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  '&:hover': {
+                    borderColor: 'primary.main',
+                    bgcolor: alpha('#2563eb', 0.08),
+                  },
+                }}
               >
-                <GitHub />
+                <GitHub sx={{ fontSize: 20 }} />
               </IconButton>
-            </Box>
-            <Box sx={{ mt: 1 }}>
-              <Button
-                variant="outlined"
-                size="small"
-                href="https://www.voltagepark.com/ai-factory-preview?utm_source=doc-qa&utm_medium=cta&utm_campaign=agentic_rag_demo&utm_content=footer_cta"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => track('cta_build_with_ai_factory', { location: 'footer' })}
-              >
-                Build your own AI Factory
-              </Button>
-            </Box>
+            </Stack>
+          </Box>
+
+          {/* Right Column */}
+          <Box>
+            <Typography variant="subtitle2" fontWeight={700} gutterBottom sx={{ mb: 2 }}>
+              Build with AI Factory
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              Deploy your own AI-powered applications with pre-configured blueprints and enterprise infrastructure.
+            </Typography>
+            <Link
+              href="https://www.voltagepark.com/ai-factory-preview?utm_source=doc-qa&utm_medium=cta&utm_campaign=agentic_rag_demo&utm_content=footer_cta"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => track('cta_build_with_ai_factory', { location: 'footer' })}
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.5,
+                color: 'primary.main',
+                textDecoration: 'none',
+                fontWeight: 600,
+                fontSize: '0.9375rem',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              Learn more <OpenInNew sx={{ fontSize: 16 }} />
+            </Link>
           </Box>
         </Box>
 
-        <Divider sx={{ my: 3 }} />
-
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          align="center"
-          sx={{ fontSize: '0.75rem' }}
+        {/* Bottom Bar */}
+        <Box
+          sx={{
+            pt: 4,
+            borderTop: '1px solid',
+            borderColor: 'divider',
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 2,
+          }}
         >
-          Built with a{' '}
-          <Link
-            href="https://www.voltagepark.com/ai-factory?utm_source=doc-qa&utm_medium=link&utm_campaign=agentic_rag_demo&utm_content=footer_link"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => track('voltage_park_link_click', { location: 'footer' })}
-            color="primary"
-            underline="hover"
-            sx={{ fontWeight: 600 }}
-          >
-            Voltage Park AI Factory
-          </Link>
-        </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+            Powered by{' '}
+            <Link
+              href="https://www.voltagepark.com/ai-factory?utm_source=doc-qa&utm_medium=link&utm_campaign=agentic_rag_demo&utm_content=footer_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => track('voltage_park_link_click', { location: 'footer' })}
+              sx={{
+                color: 'primary.main',
+                textDecoration: 'none',
+                fontWeight: 600,
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              Voltage Park
+            </Link>
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+            Demo Application
+          </Typography>
+        </Box>
       </Container>
     </Box>
   );

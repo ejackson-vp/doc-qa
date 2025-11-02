@@ -5,8 +5,8 @@ export const runtime = 'edge';
 export async function GET() {
   const width = 1200;
   const height = 630;
-  const primary = '#10b981';
-  const secondary = '#14b8a6';
+  const primary = '#2563eb';
+  const secondary = '#7c3aed';
 
   return new ImageResponse(
     (
@@ -17,63 +17,95 @@ export async function GET() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: `linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(20, 184, 166, 0.08))`,
+          background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+          position: 'relative',
         }}
       >
+        {/* Background gradient */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(37, 99, 235, 0.15), transparent)',
+          }}
+        />
+        
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 36,
-            padding: 48,
-            borderRadius: 24,
+            gap: 48,
+            padding: 64,
+            borderRadius: 32,
             background: '#ffffff',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+            boxShadow: '0 20px 60px -10px rgba(0, 0, 0, 0.15)',
+            border: '1px solid rgba(226, 232, 240, 0.8)',
+            position: 'relative',
+            zIndex: 1,
           }}
         >
-          {/* Simple document icon */}
-          <svg width="140" height="140" viewBox="0 0 64 64" fill="none">
-            <rect x="10" y="6" width="36" height="52" rx="6" fill={secondary} opacity="0.12" />
-            <rect x="14" y="10" width="28" height="44" rx="4" fill="#ffffff" stroke={primary} strokeWidth="2" />
-            <rect x="18" y="18" width="20" height="3" rx="1.5" fill={primary} />
-            <rect x="18" y="24" width="20" height="3" rx="1.5" fill={primary} opacity="0.6" />
-            <rect x="18" y="30" width="16" height="3" rx="1.5" fill={primary} opacity="0.4" />
-            <rect x="18" y="36" width="12" height="3" rx="1.5" fill={primary} opacity="0.3" />
-          </svg>
+          {/* Logo */}
+          <div
+            style={{
+              width: 160,
+              height: 160,
+              borderRadius: '24px',
+              background: `linear-gradient(135deg, ${primary} 0%, ${secondary} 100%)`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 8px 24px -4px rgba(37, 99, 235, 0.3)',
+            }}
+          >
+            <div
+              style={{
+                width: '64px',
+                height: '80px',
+                borderRadius: '4px',
+                border: '5px solid white',
+                borderBottom: '8px solid white',
+              }}
+            />
+          </div>
 
           {/* Wordmark */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div
               style={{
                 fontSize: 96,
                 fontWeight: 800,
-                letterSpacing: -2,
-                color: '#111827',
+                letterSpacing: -3,
+                color: '#0f172a',
                 fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
+                lineHeight: 1.1,
               }}
             >
-              Doc<span style={{ color: primary }}>QA</span>
+              DocQA
             </div>
             <div
               style={{
-                marginTop: 8,
-                fontSize: 36,
+                fontSize: 40,
                 fontWeight: 600,
-                color: '#374151',
+                color: '#475569',
                 fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
+                marginTop: 4,
               }}
             >
-              Agentic RAG Demo
+              Chat with your documents using AI
             </div>
             <div
               style={{
-                marginTop: 12,
+                marginTop: 16,
                 fontSize: 24,
-                color: '#4b5563',
+                color: '#64748b',
                 fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
+                fontWeight: 500,
               }}
             >
-              Built with a Voltage Park AI Factory
+              Powered by a Voltage Park AI Factory
             </div>
           </div>
         </div>

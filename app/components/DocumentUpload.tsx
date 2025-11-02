@@ -7,12 +7,12 @@ import {
   Typography,
   Paper,
   LinearProgress,
-  Chip,
   alpha,
+  Stack,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DescriptionIcon from '@mui/icons-material/Description';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 const PROCESSING_MESSAGES = [
   'Reading your document...',
@@ -159,17 +159,32 @@ export default function DocumentUpload({ docsetId, onUploadComplete }: DocumentU
 
   return (
     <Paper
-      elevation={2}
+      elevation={0}
       sx={{
-        p: 3,
+        p: { xs: 4, md: 6 },
         borderRadius: 3,
         border: '2px dashed',
-        borderColor: file ? 'primary.main' : 'divider',
+        borderColor: file ? 'primary.main' : theme => theme.palette.divider,
         bgcolor: (theme) =>
           theme.palette.mode === 'light'
-            ? alpha(theme.palette.primary.main, file ? 0.05 : 0.02)
-            : alpha(theme.palette.primary.main, file ? 0.1 : 0.05),
-        transition: 'all 0.3s ease',
+            ? file ? alpha(theme.palette.primary.main, 0.02) : '#fafafa'
+            : file ? alpha(theme.palette.primary.main, 0.08) : alpha(theme.palette.background.paper, 0.4),
+        transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+        position: 'relative',
+        overflow: 'hidden',
+        cursor: !file && !isUploading ? 'pointer' : 'default',
+        '&:hover': !file && !isUploading ? {
+          borderColor: 'primary.main',
+          bgcolor: (theme) =>
+            theme.palette.mode === 'light'
+              ? alpha(theme.palette.primary.main, 0.03)
+              : alpha(theme.palette.primary.main, 0.12),
+        } : {},
+      }}
+      onClick={() => {
+        if (!file && !isUploading && fileInputRef.current) {
+          fileInputRef.current.click();
+        }
       }}
     >
       <input
@@ -183,65 +198,96 @@ export default function DocumentUpload({ docsetId, onUploadComplete }: DocumentU
       
       <Box sx={{ textAlign: 'center' }}>
         {!file && !isUploading && (
-          <>
-            <CloudUploadIcon 
-              sx={{ 
-                fontSize: 48, 
-                color: 'primary.main',
-                mb: 2,
-              }} 
-            />
-            <Typography variant="h6" gutterBottom>
-              Upload a Document
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              PDF files only
-            </Typography>
-            <label htmlFor="file-upload">
-              <Button 
-                variant="contained" 
-                component="span"
-                startIcon={<CloudUploadIcon />}
-              >
-                Choose File
-              </Button>
-            </label>
-          </>
-        )}
-
-        {file && !isUploading && (
-          <Box>
+          <Stack spacing={3} alignItems="center">
             <Box
               sx={{
+                width: 80,
+                height: 80,
+                borderRadius: '20px',
+                background: (theme) => 
+                  theme.palette.mode === 'light'
+                    ? 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)'
+                    : 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 2,
-                mb: 3,
+                boxShadow: (theme) =>
+                  theme.palette.mode === 'light'
+                    ? '0 8px 24px -4px rgba(37, 99, 235, 0.3)'
+                    : '0 8px 24px -4px rgba(59, 130, 246, 0.4)',
               }}
             >
-              <DescriptionIcon sx={{ fontSize: 32, color: 'primary.main' }} />
-              <Box sx={{ textAlign: 'left' }}>
-                <Typography variant="subtitle1" fontWeight={600}>
-                  {file.name}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {(file.size / 1024 / 1024).toFixed(2)} MB
-                </Typography>
-              </Box>
+              <CloudUploadIcon sx={{ fontSize: 40, color: 'white' }} />
             </Box>
             
-            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+            <Box>
+              <Typography variant="h5" fontWeight={700} gutterBottom>
+                Upload your document
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+                Drag and drop or click to browse
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+                Supports PDF files up to 50MB
+              </Typography>
+            </Box>
+
+            <Button 
+              variant="contained"
+              size="large"
+              startIcon={<InsertDriveFileIcon />}
+              onClick={(e) => {
+                e.stopPropagation();
+                fileInputRef.current?.click();
+              }}
+            >
+              Choose File
+            </Button>
+          </Stack>
+        )}
+
+        {file && !isUploading && (
+          <Stack spacing={3} alignItems="center">
+            <Box
+              sx={{
+                width: 80,
+                height: 80,
+                borderRadius: '20px',
+                bgcolor: alpha('#2563eb', 0.1),
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <DescriptionIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+            </Box>
+
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="h6" fontWeight={600} gutterBottom>
+                {file.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {(file.size / 1024 / 1024).toFixed(2)} MB • PDF Document
+              </Typography>
+            </Box>
+            
+            <Stack direction="row" spacing={2}>
               <Button 
-                variant="contained" 
-                onClick={handleUpload}
+                variant="contained"
+                size="large"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUpload();
+                }}
                 startIcon={<CloudUploadIcon />}
               >
                 Upload & Process
               </Button>
               <Button 
-                variant="outlined" 
-                onClick={() => {
+                variant="outlined"
+                size="large"
+                onClick={(e) => {
+                  e.stopPropagation();
                   setFile(null);
                   if (fileInputRef.current) {
                     fileInputRef.current.value = '';
@@ -250,36 +296,57 @@ export default function DocumentUpload({ docsetId, onUploadComplete }: DocumentU
               >
                 Cancel
               </Button>
-            </Box>
-          </Box>
+            </Stack>
+          </Stack>
         )}
 
         {(isUploading || isCreatingDocset) && (
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              {isCreatingDocset ? 'Creating collection...' : 'Processing Document...'}
-            </Typography>
-            <LinearProgress 
-              variant="indeterminate" 
-              sx={{ mb: 2, mt: 2 }}
-            />
-            <Typography 
-              variant="body2" 
-              color="text.secondary"
+          <Stack spacing={3} alignItems="center">
+            <Box
               sx={{
-                minHeight: '1.5em',
-                transition: 'opacity 0.3s ease',
+                width: 80,
+                height: 80,
+                borderRadius: '20px',
+                bgcolor: alpha('#2563eb', 0.1),
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              {isCreatingDocset 
-                ? 'Setting up your document collection...'
-                : PROCESSING_MESSAGES[currentMessageIndex]}
-            </Typography>
-          </Box>
+              <DescriptionIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+            </Box>
+
+            <Box sx={{ width: '100%', maxWidth: '400px' }}>
+              <Typography variant="h6" fontWeight={600} gutterBottom align="center">
+                {isCreatingDocset ? 'Creating collection...' : 'Processing your document'}
+              </Typography>
+              <LinearProgress 
+                variant="indeterminate" 
+                sx={{ 
+                  my: 2,
+                  height: 6,
+                  borderRadius: 3,
+                }}
+              />
+              <Typography 
+                variant="body2" 
+                color="text.secondary"
+                align="center"
+                sx={{
+                  minHeight: '1.5em',
+                  transition: 'opacity 0.3s ease',
+                }}
+              >
+                {isCreatingDocset 
+                  ? 'Setting up your document collection...'
+                  : PROCESSING_MESSAGES[currentMessageIndex]}
+              </Typography>
+            </Box>
+          </Stack>
         )}
 
         {error && (
-          <Typography color="error" variant="body2" sx={{ mt: 2 }}>
+          <Typography color="error" variant="body2" sx={{ mt: 3 }}>
             {error}
           </Typography>
         )}

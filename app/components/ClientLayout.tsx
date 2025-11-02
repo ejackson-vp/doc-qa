@@ -3,7 +3,6 @@
 import { ReactNode } from 'react';
 import { Box } from '@mui/material';
 import Header from './Header';
-import Banner from './Banner';
 import Footer from './Footer';
 
 interface ClientLayoutProps {
@@ -21,7 +20,6 @@ export default function ClientLayout({ children, onThemeToggle }: ClientLayoutPr
       }}
     >
       <Header onThemeToggle={onThemeToggle} />
-      <Banner />
       <Box component="main" sx={{ flexGrow: 1 }}>
         {children}
       </Box>

@@ -15,13 +15,13 @@ import {
   Link,
   IconButton,
   Avatar,
+  Stack,
+  Divider,
 } from '@mui/material';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import PersonIcon from '@mui/icons-material/Person';
-import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
-import SecurityIcon from '@mui/icons-material/Security';
-import SpeedIcon from '@mui/icons-material/Speed';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { track } from '@vercel/analytics';
 import DocumentUpload from './components/DocumentUpload';
 import ChatMessage from './components/ChatMessage';
@@ -237,240 +237,186 @@ export default function Home() {
       {/* Hero Section */}
       <Box
         sx={{
-          background: (theme) =>
-            theme.palette.mode === 'light'
-              ? `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.1)} 0%, ${alpha(theme.palette.secondary.light, 0.1)} 100%)`
-              : `linear-gradient(135deg, ${alpha(theme.palette.primary.dark, 0.2)} 0%, ${alpha(theme.palette.secondary.dark, 0.2)} 100%)`,
-          py: { xs: 8, md: 12 },
           position: 'relative',
+          pt: { xs: 8, md: 12 },
+          pb: { xs: 12, md: 16 },
           overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: { xs: '150%', md: '100%' },
+            height: '100%',
+            background: theme.palette.mode === 'light'
+              ? 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(37, 99, 235, 0.15), transparent)'
+              : 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.2), transparent)',
+            pointerEvents: 'none',
+          },
         }}
       >
         <Container maxWidth="lg">
           <Box
             sx={{
+              position: 'relative',
               textAlign: 'center',
-              maxWidth: '800px',
+              maxWidth: '900px',
               mx: 'auto',
             }}
           >
+            {/* Badge */}
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+                px: 2.5,
+                py: 1,
+                mb: 4,
+                borderRadius: '100px',
+                border: `1.5px solid ${theme.palette.divider}`,
+                bgcolor: theme.palette.mode === 'light' ? 'background.paper' : alpha(theme.palette.background.paper, 0.6),
+                backdropFilter: 'blur(10px)',
+              }}
+            >
+              <AutoAwesomeIcon sx={{ fontSize: 18, color: 'primary.main' }} />
+              <Typography
+                sx={{
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  color: 'text.secondary',
+                }}
+              >
+                Powered by a{' '}
+                <Link
+                  href="https://www.voltagepark.com/ai-factory?utm_source=doc-qa&utm_medium=link&utm_campaign=agentic_rag_demo&utm_content=hero_badge"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => track('voltage_park_link_click', { location: 'hero_badge' })}
+                  sx={{
+                    color: 'primary.main',
+                    textDecoration: 'none',
+                    fontWeight: 700,
+                    '&:hover': {
+                      textDecoration: 'underline',
+                    },
+                  }}
+                >
+                  Voltage Park AI Factory
+                </Link>
+              </Typography>
+            </Box>
+
+            {/* Headline */}
             <Typography
               variant="h1"
               component="h1"
               gutterBottom
               sx={{
-                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                mb: 3,
+                background: theme.palette.mode === 'light'
+                  ? 'linear-gradient(135deg, #0f172a 0%, #334155 100%)'
+                  : 'linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
-                mb: 3,
               }}
             >
-              Upload documents. Ask questions. Get instant answers.
+              Chat with your documents using AI
             </Typography>
 
+            {/* Subtitle */}
             <Typography
               variant="h5"
-              color="text.secondary"
-              sx={{ mb: 4, fontWeight: 400 }}
+              sx={{
+                mb: 5,
+                color: 'text.secondary',
+                fontWeight: 400,
+                maxWidth: '700px',
+                mx: 'auto',
+                lineHeight: 1.6,
+              }}
             >
-              Multi‑step, retrieval‑augmented answers—built with a Voltage Park AI Factory for a fast, secure, and easy deployment.
+              Upload PDFs and get instant, accurate answers powered by retrieval-augmented generation
             </Typography>
 
-            <Box
-              sx={{
-                display: 'flex',
-                gap: 2,
-                justifyContent: 'center',
-                flexWrap: 'wrap',
-                mb: 6,
-              }}
+            {/* CTA Buttons */}
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={2}
+              justifyContent="center"
+              sx={{ mb: 8 }}
             >
               <Button
                 variant="contained"
                 size="large"
-                onClick={handleScrollToCreate}
-                startIcon={<AutoAwesomeIcon />}
+                component="a"
+                href="https://www.voltagepark.com/ai-factory-preview?utm_source=doc-qa&utm_medium=cta&utm_campaign=agentic_rag_demo&utm_content=hero_primary"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track('deploy_factory_clicked', { location: 'hero_primary' })}
+                endIcon={<ArrowForwardIcon />}
                 sx={{
                   px: 4,
-                  py: 1.5,
-                  fontSize: '1.1rem',
+                  py: 1.75,
                 }}
               >
-                Try the demo
+                Deploy Your Own AI Factory
               </Button>
               <Button
                 variant="outlined"
                 size="large"
-                href="https://www.voltagepark.com/ai-factory-preview?utm_source=doc-qa&utm_medium=cta&utm_campaign=agentic_rag_demo&utm_content=hero_secondary"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => track('cta_build_with_ai_factory', { location: 'hero_section' })}
+                onClick={handleUseSampleDoc}
                 sx={{
                   px: 4,
-                  py: 1.5,
-                  fontSize: '1.1rem',
+                  py: 1.75,
                 }}
               >
-                Build your own AI Factory
+                Try Sample Document
               </Button>
-            </Box>
+            </Stack>
 
-            {/* Voltage Park AI Factory Info Box */}
-            <Paper
-              elevation={3}
+            {/* Stats */}
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              divider={<Divider orientation="vertical" flexItem />}
+              spacing={{ xs: 3, sm: 4 }}
+              justifyContent="center"
               sx={{
-                p: 4,
+                py: 4,
+                px: 3,
                 borderRadius: 3,
-                background: (theme) =>
-                  theme.palette.mode === 'light'
-                    ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(20, 184, 166, 0.05) 100%)'
-                    : 'linear-gradient(135deg, rgba(52, 211, 153, 0.1) 0%, rgba(45, 212, 191, 0.1) 100%)',
-                border: '1px solid',
-                borderColor: (theme) =>
-                  theme.palette.mode === 'light'
-                    ? alpha(theme.palette.primary.main, 0.2)
-                    : alpha(theme.palette.primary.main, 0.3),
-                maxWidth: '900px',
-                mx: 'auto',
+                border: `1px solid ${theme.palette.divider}`,
+                bgcolor: theme.palette.mode === 'light' ? 'background.paper' : alpha(theme.palette.background.paper, 0.4),
+                backdropFilter: 'blur(10px)',
               }}
             >
-              <Box sx={{ textAlign: 'center', mb: 3 }}>
-                <Typography
-                  variant="overline"
-                  sx={{
-                    fontSize: '0.9rem',
-                    fontWeight: 700,
-                    color: 'primary.main',
-                    letterSpacing: '0.1em',
-                  }}
-                >
-                  DEMO APPLICATION
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h4" fontWeight={700} color="primary.main">
+                  Agentic
                 </Typography>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    fontWeight: 700,
-                    mt: 1,
-                    mb: 2,
-                  }}
-                >
-                  Built with{' '}
-                  <Link
-                    href="https://www.voltagepark.com/ai-factory?utm_source=doc-qa&utm_medium=link&utm_campaign=agentic_rag_demo&utm_content=hero_info_link"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => track('voltage_park_link_click', { location: 'hero_section' })}
-                    sx={{
-                      color: 'inherit',
-                      textDecoration: 'none',
-                      borderBottom: '3px solid',
-                      borderBottomColor: 'primary.main',
-                      transition: 'all 0.2s',
-                      '&:hover': {
-                        color: 'primary.main',
-                      },
-                    }}
-                  >
-                    Voltage Park AI Factory
-                  </Link>
-                </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ maxWidth: '700px', mx: 'auto' }}>
-                  This app demonstrates intelligent document analysis using pre-configured blueprints 
-                  that let you deploy AI systems in minutes.
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                  RAG architecture
                 </Typography>
               </Box>
-
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
-                  gap: 3,
-                  mt: 4,
-                }}
-              >
-                <Box sx={{ textAlign: 'center' }}>
-                  <Box
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: '50%',
-                      background: (theme) =>
-                        theme.palette.mode === 'light'
-                          ? alpha(theme.palette.primary.main, 0.1)
-                          : alpha(theme.palette.primary.main, 0.2),
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mx: 'auto',
-                      mb: 1.5,
-                    }}
-                  >
-                    <RocketLaunchIcon sx={{ fontSize: 28, color: 'primary.main' }} />
-                  </Box>
-                  <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-                    Deploy in Minutes
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.85rem' }}>
-                    No infrastructure setup required
-                  </Typography>
-                </Box>
-
-                <Box sx={{ textAlign: 'center' }}>
-                  <Box
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: '50%',
-                      background: (theme) =>
-                        theme.palette.mode === 'light'
-                          ? alpha(theme.palette.secondary.main, 0.1)
-                          : alpha(theme.palette.secondary.main, 0.2),
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mx: 'auto',
-                      mb: 1.5,
-                    }}
-                  >
-                    <SpeedIcon sx={{ fontSize: 28, color: 'secondary.main' }} />
-                  </Box>
-                  <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-                    Lightning Fast
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.85rem' }}>
-                    Optimized AI inference
-                  </Typography>
-                </Box>
-
-                <Box sx={{ textAlign: 'center' }}>
-                  <Box
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: '50%',
-                      background: (theme) =>
-                        theme.palette.mode === 'light'
-                          ? alpha(theme.palette.primary.main, 0.1)
-                          : alpha(theme.palette.primary.main, 0.2),
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mx: 'auto',
-                      mb: 1.5,
-                    }}
-                  >
-                    <SecurityIcon sx={{ fontSize: 28, color: 'primary.main' }} />
-                  </Box>
-                  <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-                    Enterprise Security
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.85rem' }}>
-                    Built-in compliance
-                  </Typography>
-                </Box>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h4" fontWeight={700} color="primary.main">
+                  100%
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                  Source-grounded answers
+                </Typography>
               </Box>
-            </Paper>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h4" fontWeight={700} color="primary.main">
+                  Instant
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                  Real-time responses
+                </Typography>
+              </Box>
+            </Stack>
           </Box>
         </Container>
       </Box>
@@ -478,107 +424,131 @@ export default function Home() {
       {/* How it works Section */}
       <Box
         sx={{
-          py: { xs: 6, md: 10 },
+          py: { xs: 8, md: 12 },
+          bgcolor: theme.palette.mode === 'light' ? '#fafafa' : alpha(theme.palette.background.paper, 0.3),
         }}
       >
         <Container maxWidth="lg">
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1.2fr 1fr' }, gap: 6, alignItems: 'center' }}>
-            <Box>
-              <Typography variant="h2" component="h2" gutterBottom>
-                How it works
-              </Typography>
+          <Box sx={{ textAlign: 'center', mb: 8 }}>
+            <Typography variant="h2" component="h2" gutterBottom>
+              How it works
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ maxWidth: '600px', mx: 'auto' }}>
+              A simple, powerful workflow that turns your documents into an intelligent knowledge base
+            </Typography>
+          </Box>
 
-              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
-                <Paper elevation={1} sx={{ p: 3, borderRadius: 3 }}>
-                  <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-                    1) Upload
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Upload a PDF to create a document collection.
-                  </Typography>
-                </Paper>
-                <Paper elevation={1} sx={{ p: 3, borderRadius: 3 }}>
-                  <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-                    2) Ingest & index
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    We parse, chunk, and embed your document for fast, accurate retrieval.
-                  </Typography>
-                </Paper>
-                <Paper elevation={1} sx={{ p: 3, borderRadius: 3 }}>
-                  <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-                    3) Retrieve & plan (Agentic)
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    An agent retrieves the most relevant chunks and plans the response.
-                  </Typography>
-                </Paper>
-                <Paper elevation={1} sx={{ p: 3, borderRadius: 3 }}>
-                  <Typography variant="subtitle2" fontWeight={700} gutterBottom>
-                    4) Answer
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    You get a concise answer grounded in your source document.
-                  </Typography>
-                </Paper>
-              </Box>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 3, mb: 6 }}>
+            {[
+              {
+                number: '01',
+                title: 'Upload',
+                description: 'Drop in your PDF documents to create a searchable collection',
+              },
+              {
+                number: '02',
+                title: 'Process',
+                description: 'We parse, chunk, and embed your documents for semantic search',
+              },
+              {
+                number: '03',
+                title: 'Retrieve',
+                description: 'AI agent finds the most relevant passages for your question',
+              },
+              {
+                number: '04',
+                title: 'Answer',
+                description: 'Get accurate, contextual responses grounded in your sources',
+              },
+            ].map((step) => (
+              <Paper
+                key={step.number}
+                elevation={0}
+                sx={{
+                  p: 4,
+                  borderRadius: 3,
+                  border: `1px solid ${theme.palette.divider}`,
+                  position: 'relative',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    borderColor: 'primary.main',
+                    transform: 'translateY(-2px)',
+                    boxShadow: theme.palette.mode === 'light'
+                      ? '0 8px 24px -4px rgba(37, 99, 235, 0.15)'
+                      : '0 8px 24px -4px rgba(59, 130, 246, 0.25)',
+                  },
+                }}
+              >
+                <Typography
+                  variant="h3"
+                  sx={{
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    fontSize: '3rem',
+                    fontWeight: 800,
+                    color: theme.palette.mode === 'light'
+                      ? alpha(theme.palette.primary.main, 0.08)
+                      : alpha(theme.palette.primary.main, 0.15),
+                    lineHeight: 1,
+                  }}
+                >
+                  {step.number}
+                </Typography>
+                <Typography variant="h5" fontWeight={700} gutterBottom>
+                  {step.title}
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {step.description}
+                </Typography>
+              </Paper>
+            ))}
+          </Box>
 
-              <Box sx={{ mt: 3 }}>
-                <Button variant="outlined" onClick={handleUseSampleDoc}>
-                  No PDF? Try a sample doc
-                </Button>
-              </Box>
-            </Box>
-
-            <Box>
-              <Box
-                component="img"
-                src="/how-it-works/sample.png"
-                alt="Sample conversation showing a concise answer"
-                sx={{ width: '100%', borderRadius: 3, boxShadow: 3, display: 'block' }}
-              />
-            </Box>
+          <Box sx={{ textAlign: 'center' }}>
+            <Box
+              component="img"
+              src="/how-it-works/sample.png"
+              alt="Sample conversation showing a concise answer"
+              sx={{
+                width: '100%',
+                maxWidth: '700px',
+                borderRadius: 3,
+                boxShadow: theme.palette.mode === 'light'
+                  ? '0 20px 60px -10px rgba(0, 0, 0, 0.15)'
+                  : '0 20px 60px -10px rgba(0, 0, 0, 0.5)',
+                border: `1px solid ${theme.palette.divider}`,
+              }}
+            />
           </Box>
         </Container>
       </Box>
 
       {/* Main Content Section */}
       <Box
-        id="create-section"
         sx={{
-          bgcolor: (theme) =>
-            theme.palette.mode === 'light'
-              ? alpha(theme.palette.primary.main, 0.03)
-              : alpha(theme.palette.primary.main, 0.08),
-          py: { xs: 6, md: 10 },
+          py: { xs: 8, md: 12 },
         }}
       >
         <Container maxWidth="lg">
           <Box sx={{ textAlign: 'center', mb: 6 }}>
-            <Typography variant="h2" component="h2" gutterBottom>
-              Chat with your document
+            <Typography id="create-section" variant="h2" component="h2" gutterBottom>
+              See it in action
             </Typography>
-            <Typography variant="h6" color="text.secondary">
-              Upload a document and start asking questions
+            <Typography variant="body1" color="text.secondary">
+              Try this live demo with our sample document or upload your own
             </Typography>
           </Box>
 
           <Box sx={{ maxWidth: 'lg', mx: 'auto' }}>
             {/* Upload Section */}
             {!currentDocset && (
-          <Paper
-            elevation={2}
-            sx={{
-              p: { xs: 3, md: 4 },
-              borderRadius: 3,
-              mb: 4,
-            }}
-          >
+              <Box>
                 <DocumentUpload
                   docsetId={null}
                   onUploadComplete={handleUploadComplete}
                 />
-              </Paper>
+              </Box>
             )}
 
             {/* Chat Interface */}
@@ -590,52 +560,68 @@ export default function Home() {
                   flexDirection: 'column',
                   borderRadius: 3,
                   overflow: 'hidden',
+                  border: `1px solid ${theme.palette.divider}`,
                 }}
               >
                 {/* Header */}
                 <Box
                   sx={{
-                    p: 2,
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
+                    p: 3,
+                    borderBottom: `1px solid ${theme.palette.divider}`,
+                    bgcolor: theme.palette.mode === 'light' ? '#fafafa' : alpha(theme.palette.background.paper, 0.5),
                   }}
                 >
-                  <Box>
-                    <Typography variant="h6" fontWeight={600}>
-                      {currentDocset.filename || 'Document'}
-                    </Typography>
-                    {generations.length === 0 && !pendingQuestion && (
-                      <Typography variant="body2" color="text.secondary">
-                        Document ready. Ask a question to get started.
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
+                    <Box>
+                      <Typography variant="h6" fontWeight={700} gutterBottom>
+                        {currentDocset.filename || 'Document'}
                       </Typography>
-                    )}
+                      {generations.length === 0 && !pendingQuestion && (
+                        <Typography variant="body2" color="text.secondary">
+                          Ready to answer your questions
+                        </Typography>
+                      )}
+                    </Box>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={handleReset}
+                    >
+                      Upload New Document
+                    </Button>
                   </Box>
                 </Box>
 
-                {/* Messages Area - Grows with content */}
+                {/* Messages Area */}
                 <Box
                   sx={{
                     p: 3,
                     display: 'flex',
                     flexDirection: 'column',
-                    minHeight: '300px',
+                    minHeight: '400px',
+                    maxHeight: '600px',
+                    overflowY: 'auto',
                   }}
                 >
                   {generations.length === 0 && !pendingQuestion ? (
                     <Box
                       sx={{
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
                         color: 'text.secondary',
-                        minHeight: '300px',
+                        flex: 1,
+                        textAlign: 'center',
+                        gap: 2,
                       }}
                     >
-                      <Typography variant="body1" align="center">
-                        Start a conversation by asking a question about your document.
+                      <QuestionAnswerIcon sx={{ fontSize: 64, opacity: 0.3 }} />
+                      <Typography variant="h6" color="text.secondary">
+                        Ask a question to get started
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ maxWidth: '400px' }}>
+                        Try asking about the main concepts, key findings, or specific details from your document
                       </Typography>
                     </Box>
                   ) : (
@@ -654,19 +640,20 @@ export default function Home() {
                             <Avatar
                               sx={{
                                 bgcolor: 'primary.main',
-                                width: 32,
-                                height: 32,
+                                width: 36,
+                                height: 36,
                                 flexShrink: 0,
                               }}
                             >
-                              <PersonIcon sx={{ fontSize: 18 }} />
+                              <PersonIcon sx={{ fontSize: 20 }} />
                             </Avatar>
                             <Box
                               sx={{
                                 bgcolor: 'primary.main',
                                 color: 'primary.contrastText',
-                                p: 2,
-                                borderRadius: 2,
+                                px: 3,
+                                py: 2,
+                                borderRadius: 3,
                                 borderTopRightRadius: 0,
                               }}
                             >
@@ -684,43 +671,43 @@ export default function Home() {
                       <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start', maxWidth: '85%' }}>
                         <Avatar
                           sx={{
-                            bgcolor: (theme) =>
-                              theme.palette.mode === 'light'
-                                ? alpha(theme.palette.primary.main, 0.1)
-                                : alpha(theme.palette.primary.main, 0.2),
+                            bgcolor: alpha(theme.palette.primary.main, 0.1),
                             color: 'primary.main',
-                            width: 32,
-                            height: 32,
+                            width: 36,
+                            height: 36,
                             flexShrink: 0,
                           }}
                         >
-                          <QuestionAnswerIcon sx={{ fontSize: 18 }} />
+                          <QuestionAnswerIcon sx={{ fontSize: 20 }} />
                         </Avatar>
                         <Box
                           sx={{
-                            bgcolor: (theme) =>
-                              theme.palette.mode === 'light'
-                                ? alpha(theme.palette.primary.main, 0.05)
-                                : alpha(theme.palette.primary.main, 0.1),
-                            p: 2,
-                            borderRadius: 2,
+                            bgcolor: alpha(theme.palette.primary.main, 0.05),
+                            px: 3,
+                            py: 2,
+                            borderRadius: 3,
                             borderTopLeftRadius: 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
                           }}
                         >
                           <CircularProgress size={20} />
+                          <Typography variant="body2" color="text.secondary">
+                            Thinking...
+                          </Typography>
                         </Box>
                       </Box>
                     </Box>
                   )}
                 </Box>
 
-                {/* Input Area - Fixed at bottom */}
+                {/* Input Area */}
                 <Box
                   sx={{
-                    p: 2,
-                    borderTop: '1px solid',
-                    borderColor: 'divider',
-                    bgcolor: 'background.paper',
+                    p: 3,
+                    borderTop: `1px solid ${theme.palette.divider}`,
+                    bgcolor: theme.palette.mode === 'light' ? '#fafafa' : alpha(theme.palette.background.paper, 0.5),
                   }}
                 >
                   {error && (
@@ -745,8 +732,8 @@ export default function Home() {
                       sx={{
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 2,
+                          bgcolor: 'background.paper',
                         },
-                        mb: 1.5,
                       }}
                       InputProps={{
                         endAdornment: (
@@ -754,30 +741,180 @@ export default function Home() {
                             type="submit"
                             disabled={isGenerating || !question.trim()}
                             color="primary"
-                            sx={{ mr: 1 }}
+                            sx={{
+                              width: 40,
+                              height: 40,
+                            }}
                           >
                             {isGenerating ? (
                               <CircularProgress size={20} />
                             ) : (
-                              <QuestionAnswerIcon />
+                              <ArrowForwardIcon />
                             )}
                           </IconButton>
                         ),
                       }}
                     />
-                    <Button
-                      variant="outlined"
-                      fullWidth
-                      onClick={handleReset}
-                      sx={{ mt: 1 }}
-                    >
-                      Upload New Document
-                    </Button>
                   </Box>
                 </Box>
               </Paper>
             )}
-              </Box>
+          </Box>
+        </Container>
+      </Box>
+
+      {/* Deploy Your Own Section */}
+      <Box
+        sx={{
+          py: { xs: 10, md: 14 },
+          position: 'relative',
+          overflow: 'hidden',
+          bgcolor: theme.palette.mode === 'light' ? 'primary.main' : alpha(theme.palette.primary.main, 0.95),
+          color: 'primary.contrastText',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: theme.palette.mode === 'light'
+              ? 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)'
+              : 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.2) 100%)',
+            pointerEvents: 'none',
+          },
+        }}
+      >
+        <Container maxWidth="lg">
+          <Box
+            sx={{
+              position: 'relative',
+              textAlign: 'center',
+              maxWidth: '900px',
+              mx: 'auto',
+            }}
+          >
+            <Typography
+              variant="h2"
+              component="h2"
+              gutterBottom
+              sx={{
+                mb: 3,
+                fontWeight: 800,
+                color: 'inherit',
+              }}
+            >
+              Ready to Deploy Your Own AI Factory?
+            </Typography>
+            
+            <Typography
+              variant="h5"
+              sx={{
+                mb: 6,
+                fontWeight: 400,
+                maxWidth: '700px',
+                mx: 'auto',
+                lineHeight: 1.6,
+                opacity: 0.95,
+              }}
+            >
+              This is just a demo. Get a custom AI Factory built for your documents, your models, and your business goals.
+            </Typography>
+
+            {/* Benefits Grid */}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+                gap: 3,
+                mb: 6,
+              }}
+            >
+              {[
+                {
+                  title: 'Faster Time-to-Value',
+                  description: 'Move from idea to production-ready AI in weeks, not quarters.',
+                },
+                {
+                  title: 'Private & Secure',
+                  description: 'Your data never leaves your perimeter for zero compromise on security.',
+                },
+                {
+                  title: 'Tailored to Work for You',
+                  description: 'Work 1-on-1 with Voltage Park\'s engineering team to build a stack optimized for your exact workloads.',
+                },
+                {
+                  title: 'Cost Transparency',
+                  description: 'Pay only for GPU hours. No hidden token fees.',
+                },
+              ].map((benefit) => (
+                <Paper
+                  key={benefit.title}
+                  elevation={0}
+                  sx={{
+                    p: 4,
+                    borderRadius: 3,
+                    bgcolor: alpha('#fff', theme.palette.mode === 'light' ? 0.95 : 0.1),
+                    color: theme.palette.mode === 'light' ? 'text.primary' : 'primary.contrastText',
+                    textAlign: 'left',
+                    backdropFilter: 'blur(10px)',
+                    border: `1px solid ${alpha('#fff', 0.2)}`,
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    fontWeight={700}
+                    gutterBottom
+                    sx={{ color: theme.palette.mode === 'light' ? 'primary.main' : 'inherit' }}
+                  >
+                    {benefit.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: theme.palette.mode === 'light' ? 'text.secondary' : alpha('#fff', 0.85) }}
+                  >
+                    {benefit.description}
+                  </Typography>
+                </Paper>
+              ))}
+            </Box>
+
+            {/* CTA */}
+            <Button
+              variant="contained"
+              size="large"
+              component="a"
+              href="https://www.voltagepark.com/ai-factory-preview?utm_source=doc-qa&utm_medium=cta&utm_campaign=agentic_rag_demo&utm_content=deploy_section"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => track('deploy_factory_clicked', { location: 'deploy_section' })}
+              endIcon={<ArrowForwardIcon />}
+              sx={{
+                px: 5,
+                py: 2,
+                fontSize: '1.125rem',
+                bgcolor: theme.palette.mode === 'light' ? 'background.paper' : alpha('#fff', 0.95),
+                color: theme.palette.mode === 'light' ? 'primary.main' : 'primary.main',
+                '&:hover': {
+                  bgcolor: theme.palette.mode === 'light' ? alpha(theme.palette.background.paper, 0.9) : '#fff',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                },
+              }}
+            >
+              Request Your Custom Factory
+            </Button>
+
+            <Typography
+              variant="body2"
+              sx={{
+                mt: 3,
+                opacity: 0.85,
+              }}
+            >
+              Partner directly with our engineers to design, deploy, and scale your custom AI Factory
+            </Typography>
+          </Box>
         </Container>
       </Box>
     </Box>
