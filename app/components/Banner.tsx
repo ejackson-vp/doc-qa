@@ -25,9 +25,9 @@ export default function Banner() {
             fontWeight: 500,
           }}
         >
-          🎯 Demo Application • Built with{' '}
+          Demo Application • Built with a{' '}
           <Link
-            href="https://voltagepark.com/ai-factory"
+            href="https://www.voltagepark.com/ai-factory?utm_source=doc-qa&utm_medium=link&utm_campaign=agentic_rag_demo&utm_content=banner_link"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => track('voltage_park_link_click', { location: 'banner' })}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Container, Typography, Link, IconButton, Divider } from '@mui/material';
+import { Box, Container, Typography, Link, IconButton, Divider, Button } from '@mui/material';
 import { GitHub, LinkedIn } from '@mui/icons-material';
 import { track } from '@vercel/analytics';
 
@@ -33,35 +33,47 @@ export default function Footer() {
               DocQA
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              AI-powered document analysis
+              Agentic RAG demo built with a Voltage Park AI Factory
             </Typography>
           </Box>
 
           <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
             <Typography variant="subtitle2" fontWeight={600} gutterBottom>
-              Follow Me
+              Voltage Park
             </Typography>
             <Box>
               <IconButton
                 aria-label="LinkedIn"
-                href="https://www.linkedin.com/in/eric-jackson-b4a5741a0"
+                href="https://www.linkedin.com/company/voltage-park/"
                 target="_blank"
                 rel="noopener noreferrer"
                 size="small"
-                onClick={() => track('social_link_clicked', { platform: 'linkedin' })}
+                onClick={() => track('social_link_clicked', { platform: 'linkedin_company' })}
               >
                 <LinkedIn />
               </IconButton>
               <IconButton
                 aria-label="GitHub"
-                href="https://github.com/ejackson-vp"
+                href="https://github.com/voltagepark"
                 target="_blank"
                 rel="noopener noreferrer"
                 size="small"
-                onClick={() => track('social_link_clicked', { platform: 'github' })}
+                onClick={() => track('social_link_clicked', { platform: 'github_org' })}
               >
                 <GitHub />
               </IconButton>
+            </Box>
+            <Box sx={{ mt: 1 }}>
+              <Button
+                variant="outlined"
+                size="small"
+                href="https://www.voltagepark.com/ai-factory-preview?utm_source=doc-qa&utm_medium=cta&utm_campaign=agentic_rag_demo&utm_content=footer_cta"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track('cta_build_with_ai_factory', { location: 'footer' })}
+              >
+                Build your own AI Factory
+              </Button>
             </Box>
           </Box>
         </Box>
@@ -74,9 +86,9 @@ export default function Footer() {
           align="center"
           sx={{ fontSize: '0.75rem' }}
         >
-          Built using{' '}
+          Built with a{' '}
           <Link
-            href="https://voltagepark.com/ai-factory"
+            href="https://www.voltagepark.com/ai-factory?utm_source=doc-qa&utm_medium=link&utm_campaign=agentic_rag_demo&utm_content=footer_link"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => track('voltage_park_link_click', { location: 'footer' })}

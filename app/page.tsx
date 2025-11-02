@@ -57,6 +57,8 @@ export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
   const hasScrolledToChatRef = useRef(false);
 
+  const SAMPLE_DOCSET_ID = process.env.NEXT_PUBLIC_SAMPLE_DOCSET_ID;
+
   const FORMAT_PROMPT = 'Respond in a concise, 2-5 sentence paragraph';
 
   // Focus input only when document is first ready (not during chat)
@@ -81,6 +83,38 @@ export default function Home() {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       track('get_started_clicked', { location: 'hero_section' });
     }
+  };
+
+  const handleUseSampleDoc = () => {
+    if (!SAMPLE_DOCSET_ID) {
+      setError('Sample doc is not configured. Set NEXT_PUBLIC_SAMPLE_DOCSET_ID.');
+      return;
+    }
+
+    const sampleDocset: DocsetData = {
+      docset_id: SAMPLE_DOCSET_ID,
+      name: 'Attention Is All You Need (Sample)',
+      filename: 'Attention Is All You Need.pdf',
+      status: 'ready',
+      documents: [{ doc_id: 'sample', chunks: 0 }],
+    };
+
+    setCurrentDocset(sampleDocset);
+    setQuestion('');
+    setPendingQuestion(null);
+    setGenerations([]);
+    hasScrolledToChatRef.current = false;
+
+    track('try_sample_doc_clicked', { docset_id: SAMPLE_DOCSET_ID });
+
+    // Scroll to chat input
+    setTimeout(() => {
+      const element = document.getElementById('create-section');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }, 0);
   };
 
   const handleUploadComplete = (docsetId: string, docId: string, chunks: number, filename: string) => {
@@ -232,7 +266,7 @@ export default function Home() {
                 mb: 3,
               }}
             >
-              Upload documents. Ask questions. Get instant AI-powered answers.
+              Upload documents. Ask questions. Get instant answers.
             </Typography>
 
             <Typography
@@ -240,7 +274,7 @@ export default function Home() {
               color="text.secondary"
               sx={{ mb: 4, fontWeight: 400 }}
             >
-              Transform your documents into an intelligent Q&A system powered by cutting-edge AI.
+              Multi‑step, retrieval‑augmented answers—built with a Voltage Park AI Factory for a fast, secure, and easy deployment.
             </Typography>
 
             <Box
@@ -263,7 +297,22 @@ export default function Home() {
                   fontSize: '1.1rem',
                 }}
               >
-                Get Started
+                Try the demo
+              </Button>
+              <Button
+                variant="outlined"
+                size="large"
+                href="https://www.voltagepark.com/ai-factory-preview?utm_source=doc-qa&utm_medium=cta&utm_campaign=agentic_rag_demo&utm_content=hero_secondary"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track('cta_build_with_ai_factory', { location: 'hero_section' })}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                }}
+              >
+                Build your own AI Factory
               </Button>
             </Box>
 
@@ -308,7 +357,7 @@ export default function Home() {
                 >
                   Built with{' '}
                   <Link
-                    href="https://www.voltagepark.com/ai-factory"
+                    href="https://www.voltagepark.com/ai-factory?utm_source=doc-qa&utm_medium=link&utm_campaign=agentic_rag_demo&utm_content=hero_info_link"
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => track('voltage_park_link_click', { location: 'hero_section' })}
@@ -327,8 +376,8 @@ export default function Home() {
                   </Link>
                 </Typography>
                 <Typography variant="body1" color="text.secondary" sx={{ maxWidth: '700px', mx: 'auto' }}>
-                  This app demonstrates intelligent document analysis using pre-configured AI templates 
-                  that let you deploy production systems in minutes.
+                  This app demonstrates intelligent document analysis using pre-configured blueprints 
+                  that let you deploy AI systems in minutes.
                 </Typography>
               </Box>
 
@@ -422,6 +471,73 @@ export default function Home() {
                 </Box>
               </Box>
             </Paper>
+          </Box>
+        </Container>
+      </Box>
+
+      {/* How it works Section */}
+      <Box
+        sx={{
+          py: { xs: 6, md: 10 },
+        }}
+      >
+        <Container maxWidth="lg">
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1.2fr 1fr' }, gap: 6, alignItems: 'center' }}>
+            <Box>
+              <Typography variant="h2" component="h2" gutterBottom>
+                How it works
+              </Typography>
+
+              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
+                <Paper elevation={1} sx={{ p: 3, borderRadius: 3 }}>
+                  <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                    1) Upload
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Upload a PDF to create a document collection.
+                  </Typography>
+                </Paper>
+                <Paper elevation={1} sx={{ p: 3, borderRadius: 3 }}>
+                  <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                    2) Ingest & index
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    We parse, chunk, and embed your document for fast, accurate retrieval.
+                  </Typography>
+                </Paper>
+                <Paper elevation={1} sx={{ p: 3, borderRadius: 3 }}>
+                  <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                    3) Retrieve & plan (Agentic)
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    An agent retrieves the most relevant chunks and plans the response.
+                  </Typography>
+                </Paper>
+                <Paper elevation={1} sx={{ p: 3, borderRadius: 3 }}>
+                  <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                    4) Answer
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    You get a concise answer grounded in your source document.
+                  </Typography>
+                </Paper>
+              </Box>
+
+              <Box sx={{ mt: 3 }}>
+                <Button variant="outlined" onClick={handleUseSampleDoc}>
+                  No PDF? Try a sample doc
+                </Button>
+              </Box>
+            </Box>
+
+            <Box>
+              <Box
+                component="img"
+                src="/how-it-works/sample.png"
+                alt="Sample conversation showing a concise answer"
+                sx={{ width: '100%', borderRadius: 3, boxShadow: 3, display: 'block' }}
+              />
+            </Box>
           </Box>
         </Container>
       </Box>

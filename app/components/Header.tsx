@@ -69,6 +69,7 @@ export default function Header({ onThemeToggle }: HeaderProps) {
       <AppBar 
         position="sticky" 
         elevation={0}
+        color="default"
         sx={{
           backdropFilter: 'blur(10px)',
           backgroundColor: theme.palette.mode === 'light' 
