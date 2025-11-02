@@ -26,7 +26,7 @@ export default function ChatMessage({
     <>
       {/* User Question - Right aligned */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 4 }}>
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', maxWidth: '80%', flexDirection: 'row-reverse' }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: { xs: 'flex-end', sm: 'flex-start' }, maxWidth: { xs: '95%', sm: '80%' }, flexDirection: { xs: 'column', sm: 'row-reverse' } }}>
           <Avatar
             sx={{
               bgcolor: 'primary.main',
@@ -56,7 +56,7 @@ export default function ChatMessage({
 
       {/* AI Answer - Left aligned */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 4 }}>
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', maxWidth: '80%' }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', maxWidth: { xs: '95%', sm: '80%' }, flexDirection: { xs: 'column', sm: 'row' } }}>
           <Avatar
             sx={{
               bgcolor: (theme) =>

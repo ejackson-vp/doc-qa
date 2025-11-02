@@ -56,6 +56,9 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasScrolledToChatRef = useRef(false);
+  const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  const nearBottomRef = useRef(true);
+  const prevPendingRef = useRef<string | null>(null);
 
   const SAMPLE_DOCSET_ID = process.env.NEXT_PUBLIC_SAMPLE_DOCSET_ID;
 
@@ -76,6 +79,27 @@ export default function Home() {
       }, 300);
     }
   }, [currentDocset, isGenerating, generations.length]);
+
+  // Track if user is near bottom to avoid unwanted jumps while reading
+  useEffect(() => {
+    const updateNearBottom = () => {
+      const distanceFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+      nearBottomRef.current = distanceFromBottom < 120; // px threshold
+    };
+    updateNearBottom();
+    window.addEventListener('scroll', updateNearBottom, { passive: true });
+    return () => window.removeEventListener('scroll', updateNearBottom);
+  }, []);
+
+  // Smart stick-to-bottom: only if user is near bottom or just sent a message
+  useEffect(() => {
+    const justSent = !!pendingQuestion && !prevPendingRef.current;
+    const shouldStick = nearBottomRef.current || justSent;
+    if (shouldStick) {
+      endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+    prevPendingRef.current = pendingQuestion;
+  }, [generations.length, pendingQuestion, isGenerating]);
 
   const handleScrollToCreate = () => {
     const element = document.getElementById('create-section');
@@ -527,12 +551,12 @@ export default function Home() {
       {/* Main Content Section */}
       <Box
         sx={{
-          py: { xs: 8, md: 12 },
+          py: { xs: 5, md: 12 },
         }}
       >
-        <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: 6 }}>
-            <Typography id="create-section" variant="h2" component="h2" gutterBottom>
+        <Container maxWidth="lg" disableGutters sx={{ px: { xs: 0, sm: 3 } }}>
+          <Box sx={{ textAlign: 'center', mb: { xs: 3, md: 6 } }}>
+            <Typography id="create-section" variant="h2" component="h2" gutterBottom sx={{ scrollMarginTop: { xs: '72px', md: '80px' } }}>
               See it in action
             </Typography>
             <Typography variant="body1" color="text.secondary">
@@ -540,7 +564,7 @@ export default function Home() {
             </Typography>
           </Box>
 
-          <Box sx={{ maxWidth: 'lg', mx: 'auto' }}>
+          <Box sx={{ maxWidth: 'lg', mx: 'auto', px: { xs: 0, sm: 2 } }}>
             {/* Upload Section */}
             {!currentDocset && (
               <Box>
@@ -558,7 +582,7 @@ export default function Home() {
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  borderRadius: 3,
+                  borderRadius: { xs: 0, sm: 3 },
                   overflow: 'hidden',
                   border: `1px solid ${theme.palette.divider}`,
                 }}
@@ -566,7 +590,7 @@ export default function Home() {
                 {/* Header */}
                 <Box
                   sx={{
-                    p: 3,
+                    p: { xs: 2, sm: 3 },
                     borderBottom: `1px solid ${theme.palette.divider}`,
                     bgcolor: theme.palette.mode === 'light' ? '#fafafa' : alpha(theme.palette.background.paper, 0.5),
                   }}
@@ -595,12 +619,9 @@ export default function Home() {
                 {/* Messages Area */}
                 <Box
                   sx={{
-                    p: 3,
+                    p: { xs: 2.5, sm: 3 },
                     display: 'flex',
                     flexDirection: 'column',
-                    minHeight: '400px',
-                    maxHeight: '600px',
-                    overflowY: 'auto',
                   }}
                 >
                   {generations.length === 0 && !pendingQuestion ? (
@@ -611,12 +632,12 @@ export default function Home() {
                         alignItems: 'center',
                         justifyContent: 'center',
                         color: 'text.secondary',
-                        flex: 1,
+                        py: 2,
                         textAlign: 'center',
                         gap: 2,
                       }}
                     >
-                      <QuestionAnswerIcon sx={{ fontSize: 64, opacity: 0.3 }} />
+                      <QuestionAnswerIcon sx={{ fontSize: { xs: 48, sm: 64 }, opacity: 0.3 }} />
                       <Typography variant="h6" color="text.secondary">
                         Ask a question to get started
                       </Typography>
@@ -636,7 +657,7 @@ export default function Home() {
                       ))}
                       {pendingQuestion && (
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
-                          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start', maxWidth: '85%', flexDirection: 'row-reverse' }}>
+                          <Box sx={{ display: 'flex', gap: 1.5, alignItems: { xs: 'flex-end', sm: 'flex-start' }, maxWidth: { xs: '95%', sm: '85%' }, flexDirection: { xs: 'column', sm: 'row-reverse' } }}>
                             <Avatar
                               sx={{
                                 bgcolor: 'primary.main',
@@ -668,7 +689,7 @@ export default function Home() {
                   )}
                   {isGenerating && (
                     <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 3 }}>
-                      <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start', maxWidth: '85%' }}>
+                      <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start', maxWidth: { xs: '95%', sm: '85%' }, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <Avatar
                           sx={{
                             bgcolor: alpha(theme.palette.primary.main, 0.1),
@@ -700,14 +721,22 @@ export default function Home() {
                       </Box>
                     </Box>
                   )}
+                  <Box ref={endOfMessagesRef} />
                 </Box>
 
                 {/* Input Area */}
                 <Box
                   sx={{
-                    p: 3,
+                    p: { xs: 2, sm: 3 },
+                    pb: { xs: 'calc(env(safe-area-inset-bottom, 0px) + 12px)', sm: 3 },
+                    position: { xs: 'sticky', md: 'static' },
+                    bottom: 0,
+                    zIndex: 2,
                     borderTop: `1px solid ${theme.palette.divider}`,
                     bgcolor: theme.palette.mode === 'light' ? '#fafafa' : alpha(theme.palette.background.paper, 0.5),
+                    boxShadow: (theme) => theme.palette.mode === 'light'
+                      ? '0 -6px 16px -8px rgba(0,0,0,0.12)'
+                      : '0 -6px 16px -8px rgba(0,0,0,0.5)',
                   }}
                 >
                   {error && (
@@ -735,6 +764,7 @@ export default function Home() {
                           bgcolor: 'background.paper',
                         },
                       }}
+                      inputProps={{ 'aria-label': 'Ask a question', style: { fontSize: 16 } }}
                       InputProps={{
                         endAdornment: (
                           <IconButton
@@ -742,9 +772,10 @@ export default function Home() {
                             disabled={isGenerating || !question.trim()}
                             color="primary"
                             sx={{
-                              width: 40,
-                              height: 40,
+                              width: 44,
+                              height: 44,
                             }}
+                            aria-label="Send"
                           >
                             {isGenerating ? (
                               <CircularProgress size={20} />
